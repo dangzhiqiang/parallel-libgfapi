@@ -6,14 +6,14 @@
 # specified in a text file.
 # 
 # environment variables:
-# PGFAPI_PROCESSES - how many processes per client (default: 16)
+# PGFAPI_PROCESSES - how many processes per client (default: 4)
 # PGFAPI_THREADS_PER_PROC - how many POSIX threads per process (default: 1)
 # PGFAPI_FILES - number of files per thread to use (default 10000)
 # PGFAPI_LOAD - what kind of workload - seq-wr or seq-rd, default is seq-wr 
 #               "seq" = "sequential", "wr" = "write", "rd" = "read", 
 # PGFAPI_FUSE - defaults to 0, if 1 use equivalent POSIX fs calls instead of libgfapi
 # PGFAPI_DIRECT - defaults to 0, if 1 use O_DIRECT flag at open time
-# PGFAPI_TOPDIR - top directory used within the Gluster volume, default is /tmp
+# PGFAPI_TOPDIR - top directory used within the Gluster volume, default is gfapi-test
 # PGFAPI_CLIENTS - filename containing list of clients
 # PGFAPI_APPEND - defaults to 0, if 1 then append to file don't create it
 # PGFAPI_OVERWRITE - defaults to 0, if 1 then overwrite existing file don't create it
@@ -21,7 +21,6 @@
 # PGFAPI_EXTERNAL_START - if defined, then then let user fire the starting gun 
 #                           (allows multiple concurrent parallel_gfapi_test.sh runs)
 #
-#threads=16
 
 # process exit status codes
 OK=0
@@ -30,7 +29,7 @@ NOTOK=1
 # all of these variables have defaults
 filesize_kb=${PGFAPI_FILESIZE:-4}
 processes=${PGFAPI_PROCESSES:-4}
-files=${PGFAPI_FILES:-10240}
+files=${PGFAPI_FILES:-10000}
 recordsize_kb=${PGFAPI_RECORDSIZE:-64}
 clientFile=${PGFAPI_CLIENTS:-clients.list}
 export GFAPI_LOAD=${PGFAPI_LOAD:-seq-wr}
@@ -47,7 +46,7 @@ PROGRAM=${PGFAPI_PROGRAM:-gfapi_perf_test}
 # GFAPI_IOREQ only used for random I/O tests
 export GFAPI_IOREQ=4096
 MOUNTPOINT=${PGFAPI_MOUNTPOINT:-/mnt/gfapi}
-TOPDIR=${PGFAPI_TOPDIR:-/gfapi-test}
+TOPDIR=${PGFAPI_TOPDIR:-gfapi-test}
 
 # validate that all parameters have been defined
 
