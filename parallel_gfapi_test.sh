@@ -15,6 +15,7 @@
 # PGFAPI_DIRECT - defaults to 0, if 1 use O_DIRECT flag at open time
 # PGFAPI_TOPDIR - top directory used within the Gluster volume, default is gfapi-test
 # PGFAPI_CLIENTS - filename containing list of clients
+# PGFAPI_SERVERS - filename containing list of servers 
 # PGFAPI_APPEND - defaults to 0, if 1 then append to file don't create it
 # PGFAPI_OVERWRITE - defaults to 0, if 1 then overwrite existing file don't create it
 # PGFAPI_FILESIZE - defaults to 4 (KB), number of KB to write or read per file
@@ -32,6 +33,7 @@ processes=${PGFAPI_PROCESSES:-4}
 files=${PGFAPI_FILES:-10000}
 recordsize_kb=${PGFAPI_RECORDSIZE:-64}
 clientFile=${PGFAPI_CLIENTS:-clients.list}
+serverFile=${PGFAPI_SERVERS:-servers.list}
 export GFAPI_LOAD=${PGFAPI_LOAD:-seq-wr}
 export GFAPI_FUSE=${PGFAPI_FUSE:-0}
 export GFAPI_APPEND=${PGFAPI_APPEND:-0}
@@ -60,8 +62,12 @@ if [ $? !=  $OK ] ; then
   echo "program $PROGRAM either does not exist (if absolute path) or is not in your PATH env. var. (if no directory specified)"
   exit $NOTOK
 fi
-if [ ! -f $clientFile ] ; then 
+if [ ! -s $clientFile ] ; then 
   echo "file $clientFile containing list of client hosts is not available"
+  exit $NOTOK
+fi
+if [ ! -s $serverFile ] ; then 
+  echo "file $serverFile containing list of server hosts is not available"
   exit $NOTOK
 fi
 #
@@ -95,6 +101,7 @@ if [ "$GFAPI_LOAD" = "rnd-wr" -o "$GFAPI_LOAD" = "rnd-rd" ] ; then
   echo "I/O requests per thread: $GFAPI_IOREQ"
 fi
 clients="`cat $clientFile`"
+servers="`cat $serverFile`"
 clientCnt=`cat $clientFile | wc -l `
 # if you want to use Gluster mountpoint as log directory, that's ok
 # PGFAPI_LOGDIR=$MOUNTPOINT/$TOPDIR/glfs_smf_logs
@@ -162,7 +169,10 @@ if [ "$GFAPI_LOAD" = "seq-wr" -a "$GFAPI_APPEND" = "0" -a "$GFAPI_OVERWRITE" = 0
  for p in $rmpids ; do wait $p ; done
  rm -f $TOPDIR/*.ready 
 fi
-par-for-all.sh servers.list 'sync'
+
+for s in $servers; do
+ ssh $s 'sync'
+done
 sleep 2
 export GFAPI_STARTING_GUN
 
