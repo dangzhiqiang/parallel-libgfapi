@@ -104,8 +104,8 @@ clients="`cat $clientFile`"
 servers="`cat $serverFile`"
 clientCnt=`cat $clientFile | wc -l `
 # if you want to use Gluster mountpoint as log directory, that's ok
-# PGFAPI_LOGDIR=$MOUNTPOINT/$TOPDIR/glfs_smf_logs
-export PGFAPI_LOGDIR=${TMPDIR:-/tmp}/parallel_gfapi_logs.$$
+PGFAPI_LOGDIR=$MOUNTPOINT/$TOPDIR/glfs_smf_logs
+export PGFAPI_LOGDIR=${PGFAPI_LOGDIR:-/tmp}/parallel_gfapi_logs.$$
 echo "log files for each libgfapi process at $PGFAPI_LOGDIR"
 
 (( start_gun_timeout = $clientCnt * $processes * $GFAPI_THREADS_PER_PROC * 3 / 10 ))
