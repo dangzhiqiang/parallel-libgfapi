@@ -22,7 +22,6 @@
 # PGFAPI_EXTERNAL_START - if defined, then then let user fire the starting gun 
 #                           (allows multiple concurrent parallel_gfapi_test.sh runs)
 #
-
 # process exit status codes
 OK=0
 NOTOK=1
@@ -49,6 +48,7 @@ PROGRAM=${PGFAPI_PROGRAM:-gfapi_perf_test}
 export GFAPI_IOREQ=4096
 MOUNTPOINT=${PGFAPI_MOUNTPOINT:-/mnt/gfapi}
 TOPDIR=${PGFAPI_TOPDIR:-gfapi-test}
+GFAPI_LOGDIR=${PGFAPI_LOGDIR:-/tmp}
 
 # validate that all parameters have been defined
 
@@ -104,9 +104,9 @@ clients="`cat $clientFile`"
 servers="`cat $serverFile`"
 clientCnt=`cat $clientFile | wc -l `
 # if you want to use Gluster mountpoint as log directory, that's ok
-PGFAPI_LOGDIR=$MOUNTPOINT/$TOPDIR/glfs_smf_logs
-export PGFAPI_LOGDIR=${PGFAPI_LOGDIR:-/tmp}/parallel_gfapi_logs.$$
-echo "log files for each libgfapi process at $PGFAPI_LOGDIR"
+# PGFAPI_LOGDIR=$MOUNTPOINT/$TOPDIR/glfs_smf_logs
+GFAPI_LOGDIR=${GFAPI_LOGDIR}/parallel_gfapi_logs.$$
+echo "log files for each libgfapi process at $GFAPI_LOGDIR"
 
 (( start_gun_timeout = $clientCnt * $processes * $GFAPI_THREADS_PER_PROC * 3 / 10 ))
 (( start_gun_timeout = $start_gun_timeout + 10 ))
@@ -136,7 +136,7 @@ rm -f $MOUNTPOINT/$TOPDIR/$GFAPI_STARTING_GUN
 find $MOUNTPOINT/$TOPDIR -maxdepth 1 -name '*.*.log' -delete
 rm -f $MOUNTPOINT/$starting_gun
 
-ALL_LOGS_DIR=$PGFAPI_LOGDIR
+ALL_LOGS_DIR=$GFAPI_LOGDIR
 rm -rf $ALL_LOGS_DIR
 mkdir -p $ALL_LOGS_DIR
 
