@@ -32,8 +32,9 @@ export PGFAPI_FILESIZE=4
 #                 force use of O_DIRECT even for sequential reads/writes
 export PGFAPI_DIRECT=0
 
-# PGFAPI_LOAD - what kind of workload - seq-wr, seq-rd, rnd-wr, rnd-rd, unlink, seq-rdwrmix
-#               default is seq-wr. "seq" = "sequential", "rnd" = "random", "wr" = "write", "rd" = "read"
+# PGFAPI_LOAD - default is seq-wr, can be one of seq-wr, seq-rd, rnd-wr, rnd-rd, unlink, seq-rdwrmix
+#               "seq-wr" = "sequential write", "seq-rd" = "sequential read", "rnd-wr" = "random write",
+#               "rnd-rd" = "random read", "unlink" = "delete", "seq-rdwrmix" = "sequential read-write mix"
 export PGFAPI_LOAD=seq-wr
 
 # PGFAPI_FUSE - defaults to 0, if 1 use equivalent POSIX fs calls instead of libgfapi
