@@ -151,7 +151,7 @@ if [ "$GFAPI_LOAD" = "seq-wr" -a "$GFAPI_APPEND" = "0" -a "$GFAPI_OVERWRITE" = 0
   for n in `seq -f "%02g" 1 $processes ` ; do 
    d=$TOPDIR/smf-gfapi-${c}.$n
    if [ "$GFAPI_FUSE" = 1 ] ; then
-     d=${MOUNTPOINT}$d
+     d=${MOUNTPOINT}/$d
    fi
    glfs_cmd="GFAPI_LOAD=unlink GFAPI_FUSE=$GFAPI_FUSE GFAPI_FILES=$files GFAPI_BASEDIR=$d GFAPI_VOLNAME=$GFAPI_VOLNAME GFAPI_HOSTNAME=$GFAPI_HOSTNAME GFAPI_THREADS_PER_PROC=$GFAPI_THREADS_PER_PROC $PROGRAM"
    
@@ -181,7 +181,7 @@ export GFAPI_STARTING_GUN
 echo -n "`date`: starting $clientCnt clients ... "
 for c in $clients ; do
  for n in `seq -f "%02g" 1 $processes` ; do 
-  mkdir -p ${MOUNTPOINT}$TOPDIR/smf-gfapi-${c}.$n
+  mkdir -p ${MOUNTPOINT}/$TOPDIR/smf-gfapi-${c}.$n
  done
 done
 sleep 2
@@ -192,7 +192,7 @@ for c in $clients ; do
   if [ "$GFAPI_FUSE" != 1 ] ; then
     export GFAPI_BASEDIR=$d
   else
-    export GFAPI_BASEDIR=${MOUNTPOINT}$d
+    export GFAPI_BASEDIR=${MOUNTPOINT}/$d
   fi
   export GFAPI_RECSZ=$recordsize_kb
   export GFAPI_FSZ=${filesize_kb}k
